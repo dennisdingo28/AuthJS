@@ -2,13 +2,14 @@
     Theste routes do not require authentication
 */
 export const publicRoutes = [
-    "/"
+    "/",
 ];
 /* *An array of routes that requires authentication
 */
 export const authRoutes = [
     "/auth/login",
     "/auth/register",
+    "/auth/error",
 ];
 
 /* *The prefix for API authentication routes
