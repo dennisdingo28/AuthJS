@@ -1,4 +1,4 @@
-import NextAuth, {DefaultSession} from "next-auth"
+import NextAuth from "next-auth"
 import { PrismaAdapter } from "@auth/prisma-adapter";
 
 import {db} from "@/lib/db";
@@ -22,7 +22,20 @@ export const {
     },
   },
   callbacks:{
-    
+    async signIn({user, account}){
+      //Allow Oauth without email verification
+      if(account?.provider!=="credentials") return true;
+
+      //@ts-ignore
+      const existingUser = await getUserById(user.id);
+
+      // Prevent sign-in without email verification
+      if(!existingUser?.emailVerified) return false;
+
+      //Todo: Add 2FA check
+
+      return true;
+    },
     async jwt({token}){
       if(!token.sub) return token; 
       
@@ -34,6 +47,7 @@ export const {
 
       return token;
     },
+    //@ts-ignore 
     async session({token, session}){
       if(token.sub && session.user){
         session.user.id = token.sub;
